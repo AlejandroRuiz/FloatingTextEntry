@@ -6,19 +6,32 @@ namespace FloatingTextFieldTest
 {
 	public class App : Application
 	{
-		FloatingTextEntry MaterialEntry {
+		FloatingTextEntry EmailEntry {
+			get;
+			set;
+		}
+
+		FloatingTextEntry PassEntry {
 			get;
 			set;
 		}
 
 		public App ()
 		{
-			MaterialEntry = new FloatingTextEntry ();
-			MaterialEntry.Placeholder = "Email";
-			MaterialEntry.AccentColor = Color.FromHex("#FFC107");
-			MaterialEntry.InactiveAccentColor = Color.FromHex ("#1976D2");
-			MaterialEntry.TextColor = Color.Purple;
-			MaterialEntry.Completed += MaterialEntry_Completed;
+			EmailEntry = new FloatingTextEntry ();
+			EmailEntry.Placeholder = "Email";
+			EmailEntry.AccentColor = Color.FromHex("#FFC107");
+			EmailEntry.InactiveAccentColor = Color.FromHex ("#1976D2");
+			EmailEntry.TextColor = Color.Purple;
+			EmailEntry.Completed += MaterialEntry_Completed;
+
+			PassEntry = new FloatingTextEntry ();
+			PassEntry.Placeholder = "Password";
+			PassEntry.AccentColor = Color.FromHex("#FFC107");
+			PassEntry.InactiveAccentColor = Color.FromHex ("#1976D2");
+			PassEntry.TextColor = Color.Purple;
+			PassEntry.Completed += MaterialEntry_Completed;
+			PassEntry.IsPassword = true;
 
 			// The root page of your application
 			MainPage = new ContentPage {
@@ -26,7 +39,8 @@ namespace FloatingTextFieldTest
 					VerticalOptions = LayoutOptions.Center,
 					Padding = new Thickness(20,0),
 					Children = {
-						MaterialEntry
+						EmailEntry,
+						PassEntry
 					}
 				}
 			};
@@ -34,7 +48,7 @@ namespace FloatingTextFieldTest
 
 		void MaterialEntry_Completed (object sender, EventArgs e)
 		{
-			Console.WriteLine (MaterialEntry.Text);
+			Console.WriteLine (EmailEntry.Text);
 		}
 
 		protected override void OnStart ()
