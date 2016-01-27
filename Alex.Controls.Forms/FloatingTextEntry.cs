@@ -1,14 +1,45 @@
 ﻿using System;
 using Xamarin.Forms;
+using System.Text.RegularExpressions;
 
 namespace Alex.Controls.Forms
 {
+	public delegate bool FloatingTextEntryValidator(string input);
+
 	public class FloatingTextEntry:Entry
 	{
+		/// <summary>
+		/// Gets the default email validator.
+		/// </summary>
+		/// <value>The email validator.</value>
+		public static FloatingTextEntryValidator EmailValidator
+		{
+			get{
+				return (input) => {
+					var emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}";
+					var isValid = Regex.Match (input, emailRegex).Success;
+					return isValid;
+				};
+			}
+		}
+
+		/// <summary>
+		/// Gets the default numeric validator.
+		/// </summary>
+		/// <value>The numeric validator.</value>
+		public static FloatingTextEntryValidator NumericValidator
+		{
+			get{
+				return (input) => {
+					var numRegex = "[0-9.+-]+";
+					var isValid = Regex.Match (input, numRegex).Success;
+					return isValid;
+				};
+			}
+		}
+
 		public FloatingTextEntry ()
 		{
-			if (Device.OS == TargetPlatform.iOS)
-				this.HeightRequest = 35;
 			this.TextColor = Color.Black;
 		}
 
@@ -58,6 +89,82 @@ namespace Alex.Controls.Forms
 			}
 			set {
 				SetValue(InactiveAccentColorProperty, value);
+			}
+		}
+
+		/// <summary>
+		/// The error color property.
+		/// </summary>
+		public static readonly BindableProperty ErrorColorProperty =
+			BindableProperty.Create<FloatingTextEntry, Color>(
+				p => p.ErrorColor, Color.Red);
+
+		/// <summary>
+		/// Gets or sets the color of the error label.
+		/// </summary>
+		/// <value>The color of the error.</value>
+		public Color ErrorColor
+		{
+			get {
+				return (Color)GetValue(ErrorColorProperty);
+			}
+			set {
+				SetValue(ErrorColorProperty, value);
+			}
+		}
+
+		/// <summary>
+		/// The validator property.
+		/// </summary>
+		public static readonly BindableProperty ValidatorProperty =
+			BindableProperty.Create<FloatingTextEntry, FloatingTextEntryValidator>(
+				p => p.Validator, null);
+
+		/// <summary>
+		/// Gets or sets the validator.
+		/// </summary>
+		/// <value>The validator.</value>
+		public FloatingTextEntryValidator Validator
+		{
+			get {
+				return (FloatingTextEntryValidator)GetValue(ValidatorProperty);
+			}
+			set {
+				SetValue(ValidatorProperty, value);
+			}
+		}
+
+		/// <summary>
+		/// The error text property.
+		/// </summary>
+		public static readonly BindableProperty ErrorTextProperty =
+			BindableProperty.Create<FloatingTextEntry, string>(
+				p => p.ErrorText, "Error");
+
+		/// <summary>
+		/// Gets or sets the error text.
+		/// </summary>
+		/// <value>The error text.</value>
+		public string ErrorText
+		{
+			get {
+				return (string)GetValue(ErrorTextProperty);
+			}
+			set {
+				SetValue(ErrorTextProperty, value);
+			}
+		}
+
+		/// <summary>
+		/// Gets a value indicating whether this text pass the validator.
+		/// </summary>
+		/// <value><c>true</c> if text pass validator; otherwise, <c>false</c>.</value>
+		public bool IsValid
+		{
+			get {
+				if (this.Validator == null)
+					return true;
+				return (this.Validator (this.Text));
 			}
 		}
 	}

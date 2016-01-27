@@ -6,23 +6,39 @@ using System.Text.RegularExpressions;
 using CoreAnimation;
 using PureLayoutSharp;
 using System.Threading.Tasks;
+using Alex.Controls.Forms;
 
 namespace Alex.Controls.iOS.Controls
 {
-	public enum EGFloatingTextFieldValidationType {
-		Email,
-		Number,
-		Default
+	public class EGFloatingTextEntryContainer : UIView
+	{
+		public EGFloatingTextEntry MainControl;
+		public UILabel ErrorLabel;
+
+		public EGFloatingTextEntryContainer(CGRect frame):base(frame)
+		{
+			ErrorLabel = new UILabel (new CGRect (0, 45, 320, 15));
+			MainControl = new EGFloatingTextEntry (new CGRect (0, 0, 320, 40));
+
+			ErrorLabel.TextColor = MainControl.ErrorColor;
+			ErrorLabel.TextAlignment = UITextAlignment.Left;
+			ErrorLabel.Lines = 1;
+			ErrorLabel.Font = UIFont.FromName ("HelveticaNeue",10);
+
+
+			this.Add (MainControl);
+			this.Add (ErrorLabel);
+			MainControl.errorLabel = ErrorLabel;
+		}
+
 	}
 
 	public class EGFloatingTextEntry:UITextField
 	{
-		delegate V EGFloatingTextFieldValidationBlock<T,U,V>(T input, out U output);
 
-		public EGFloatingTextFieldValidationType validationType = EGFloatingTextFieldValidationType.Default;
+		public FloatingTextEntryValidator Validator { get; set; }
 
-		EGFloatingTextFieldValidationBlock<string, string, bool> emailValidationBlock;
-		EGFloatingTextFieldValidationBlock<string, string, bool> numberValidationBlock;
+		public string ErrorMessage { get; set; }
 		
 		UIColor kDefaultInactiveColor = UIColor.FromWhiteAlpha(0, 0.54f);
 		UIColor kDefaultActiveColor = UIColor.Blue;
@@ -33,6 +49,9 @@ namespace Alex.Controls.iOS.Controls
 
 		public bool floatingLabel;
 		UILabel label;
+
+		public UILabel errorLabel;
+
 		UIFont labelFont;
 		UIColor labelTextColor;
 		UIView activeBorder;
@@ -52,24 +71,6 @@ namespace Alex.Controls.iOS.Controls
 		}
 
 		void commonInit(){
-			this.emailValidationBlock = (string text, out string message) => {
-				message = string.Empty;
-				var emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}";
-				var isValid = Regex.Match (text, emailRegex).Success;
-				if (!isValid) {
-					message = "Invalid Email Address";
-				}
-				return isValid;
-			};
-			this.numberValidationBlock = (string text, out string message) => {
-				message = string.Empty;
-				var numRegex = "[0-9.+-]+";
-				var isValid = Regex.Match (text, numRegex).Success;
-				if (!isValid) {
-					message = "Invalid Email Address";
-				}
-				return isValid;
-			};
 			this.floating = false;
 			this.hasError = false;
 
@@ -82,7 +83,6 @@ namespace Alex.Controls.iOS.Controls
 			this.label.Lines = 1;
 			this.label.Layer.MasksToBounds = false;
 			this.AddSubview (this.label);
-
 
 			this.activeBorder = new UIView (CGRect.Empty);
 			this.activeBorder.BackgroundColor = kDefaultActiveColor;
@@ -105,6 +105,14 @@ namespace Alex.Controls.iOS.Controls
 					this.validate();
 				}
 			);
+		}
+
+		public UIColor ErrorColor {
+			get{
+				return kDefaultErrorColor;
+			}set{
+				kDefaultErrorColor = value;
+			}
 		}
 
 		public UIColor InactiveAccentColor {
@@ -312,12 +320,15 @@ namespace Alex.Controls.iOS.Controls
 			if (!isValid){
 				this.hasError = true;
 				this.errorMessage = message;
+				this.errorLabel.Text = this.errorMessage;
 				this.labelTextColor = kDefaultErrorColor;
+				this.errorLabel.TextColor = this.kDefaultErrorColor;
 				this.activeBorder.BackgroundColor = kDefaultErrorColor;
 				this.SetNeedsDisplay ();
 			}else {
 				this.hasError = false;
 				this.errorMessage = null;
+				this.errorLabel.Text = this.errorMessage;
 				this.labelTextColor = kDefaultActiveColor;
 				this.activeBorder.BackgroundColor = kDefaultActiveColor;
 				this.SetNeedsDisplay();
@@ -325,15 +336,9 @@ namespace Alex.Controls.iOS.Controls
 		}
 
 		void validate(){
-			if (this.validationType != EGFloatingTextFieldValidationType.Default) {
-				var message = "";
-				if (this.validationType == EGFloatingTextFieldValidationType.Email) {
-					var isValid = this.emailValidationBlock (this.Text,out message);
-					performValidation (isValid, message: message);
-				} else {
-					var isValid = this.numberValidationBlock (this.Text,out message);
-					performValidation (isValid, message: message);
-				}
+			if (Validator != null) {
+				var isValid = Validator (this.Text);
+				performValidation (isValid, ErrorMessage);
 			}
 		}
 	}

@@ -39,6 +39,7 @@ namespace Alex.Controls.Android.Renderers
 				InputMethodManager imm = (InputMethodManager)base.Context.GetSystemService(Context.InputMethodService);
 				imm.HideSoftInputFromWindow(v.WindowToken, 0);
 				base.Element.Call ("SendCompleted", null);
+				Validate (this.targetEditor.Text);
 			}
 			return true;
 		}
@@ -59,8 +60,23 @@ namespace Alex.Controls.Android.Renderers
 			if (string.IsNullOrEmpty (base.Element.Text) && s.Length () == 0) {
 				return;
 			}
+			Validate (s.ToString ());
+				
 			(base.Element as IElementController).SetValueFromRenderer (FloatingTextEntry.TextProperty, s.ToString ());
-			SetAccentColor ();
+		}
+
+		void Validate(string text)
+		{
+			if (Validator != null) {
+				var isValid = Validator (text);;
+				if (isValid) {
+					this.Control.Error = null;
+				} else {
+					if (this.Control.Error != this.ErrorMessage) {
+						this.Control.Error = this.ErrorMessage;
+					}
+				}
+			}
 		}
 
 		#endregion
@@ -71,12 +87,17 @@ namespace Alex.Controls.Android.Renderers
 
 		EditText targetEditor; 
 
+		FloatingTextEntryValidator Validator {get;set;}
+
+		string ErrorMessage = "Error";
+
 		protected override void OnElementChanged (ElementChangedEventArgs<FloatingTextEntry> e)
 		{
 			base.OnElementChanged (e);
 			if (e.OldElement == null) {
 				TextInputLayout ncontrol;
 				ncontrol = new TextInputLayout (this.Context);
+				ncontrol.ErrorEnabled = true;
 				targetEditor = new EditText(this.Context);
 				ncontrol.AddView(targetEditor);
 				SetNativeControl (ncontrol);
@@ -91,6 +112,9 @@ namespace Alex.Controls.Android.Renderers
 				SetIsPassword ();
 				SetTextColor ();
 				SetInactiveAccentColor ();
+				SetErrorColor ();
+				SetValidator ();
+				SetErrorText ();
 			}
 		}
 
@@ -109,6 +133,12 @@ namespace Alex.Controls.Android.Renderers
 				SetText ();
 			} else if (e.PropertyName == Entry.TextColorProperty.PropertyName) {
 				SetTextColor ();
+			} else if (e.PropertyName == FloatingTextEntry.ErrorColorProperty.PropertyName) {
+				SetErrorColor ();
+			} else if (e.PropertyName == FloatingTextEntry.ValidatorProperty.PropertyName) {
+				SetValidator ();
+			} else if (e.PropertyName == FloatingTextEntry.ErrorTextProperty.PropertyName) {
+				SetErrorText ();
 			}
 			base.OnElementPropertyChanged (sender, e);
 		}
@@ -149,6 +179,22 @@ namespace Alex.Controls.Android.Renderers
 		void SetTextColor()
 		{
 			targetEditor.SetTextColor (base.Element.TextColor.ToAndroid ());
+		}
+
+		void SetErrorColor()
+		{
+			//TODO: Check if can be done on Android without using theme colors
+			//base.Control.ErrorColor = base.Element.ErrorColor.ToUIColor ();
+		}
+
+		void SetValidator()
+		{
+			this.Validator = base.Element.Validator;
+		}
+
+		void SetErrorText()
+		{
+			this.ErrorMessage = base.Element.ErrorText;
 		}
 
 		#endregion

@@ -13,7 +13,7 @@ using Alex.Controls.Shared.Extentions;
 namespace Alex.Controls.iOS.Renderers
 {
 	[Preserve(AllMembers = true)]
-	public class FloatingTextEntryRenderer:ViewRenderer<FloatingTextEntry, EGFloatingTextEntry>
+	public class FloatingTextEntryRenderer:ViewRenderer<FloatingTextEntry, EGFloatingTextEntryContainer>
 	{
 
 		/// <summary>
@@ -26,14 +26,14 @@ namespace Alex.Controls.iOS.Renderers
 
 		public FloatingTextEntryRenderer ()
 		{
-			this.Frame = new CGRect (0, 20, 320, 40);
+			this.Frame = new CGRect (0, 20, 320, 60);
 		}
 
 		#region Handlers
 
 		private void EditingChanged (object sender, EventArgs eventArgs)
 		{
-			(base.Element as IElementController).SetValueFromRenderer (FloatingTextEntry.TextProperty, base.Control.Text);
+			(base.Element as IElementController).SetValueFromRenderer (FloatingTextEntry.TextProperty, base.Control.MainControl.Text);
 		}
 
 		private bool ShouldReturn (UITextField view)
@@ -49,32 +49,47 @@ namespace Alex.Controls.iOS.Renderers
 
 		void SetAccentColor()
 		{
-			base.Control.AccentColor = base.Element.AccentColor.ToUIColor ();
+			base.Control.MainControl.AccentColor = base.Element.AccentColor.ToUIColor ();
 		}
 
 		void SetInactiveAccentColor()
 		{
-			base.Control.InactiveAccentColor = base.Element.InactiveAccentColor.ToUIColor ();
+			base.Control.MainControl.InactiveAccentColor = base.Element.InactiveAccentColor.ToUIColor ();
 		}
 
 		void SetPlaceholder()
 		{
-			base.Control.PlaceHolder = base.Element.Placeholder;
+			base.Control.MainControl.PlaceHolder = base.Element.Placeholder;
 		}
 
 		void SetIsPassword()
 		{
-			base.Control.SecureTextEntry = base.Element.IsPassword;
+			base.Control.MainControl.SecureTextEntry = base.Element.IsPassword;
 		}
 
 		void SetText()
 		{
-			base.Control.SetText (base.Element.Text);
+			base.Control.MainControl.SetText (base.Element.Text);
 		}
 
 		void SetTextColor()
 		{
-			base.Control.TextColor = base.Element.TextColor.ToUIColor ();
+			base.Control.MainControl.TextColor = base.Element.TextColor.ToUIColor ();
+		}
+
+		void SetErrorColor()
+		{
+			base.Control.MainControl.ErrorColor = base.Element.ErrorColor.ToUIColor ();
+		}
+
+		void SetValidator()
+		{
+			base.Control.MainControl.Validator = base.Element.Validator;
+		}
+
+		void SetErrorText()
+		{
+			base.Control.MainControl.ErrorMessage = base.Element.ErrorText;
 		}
 
 		#endregion
@@ -85,7 +100,7 @@ namespace Alex.Controls.iOS.Renderers
 			if (e.PropertyName == FloatingTextEntry.AccentColorProperty.PropertyName) {
 				SetAccentColor ();
 			} else if (e.PropertyName == FloatingTextEntry.InactiveAccentColorProperty.PropertyName) {
-				SetInactiveAccentColor();
+				SetInactiveAccentColor ();
 			} else if (e.PropertyName == Entry.PlaceholderProperty.PropertyName) {
 				SetPlaceholder ();
 			} else if (e.PropertyName == Entry.IsPasswordProperty.PropertyName) {
@@ -94,6 +109,12 @@ namespace Alex.Controls.iOS.Renderers
 				SetText ();
 			} else if (e.PropertyName == Entry.TextColorProperty.PropertyName) {
 				SetTextColor ();
+			} else if (e.PropertyName == FloatingTextEntry.ErrorColorProperty.PropertyName) {
+				SetErrorColor ();
+			} else if (e.PropertyName == FloatingTextEntry.ValidatorProperty.PropertyName) {
+				SetValidator ();
+			} else if (e.PropertyName == FloatingTextEntry.ErrorTextProperty.PropertyName) {
+				SetErrorText ();
 			}
 			base.OnElementPropertyChanged (sender, e);
 		}
@@ -102,12 +123,11 @@ namespace Alex.Controls.iOS.Renderers
 		{
 			base.OnElementChanged (e);
 			if(e.OldElement == null){
-				SetNativeControl (new EGFloatingTextEntry (this.Frame){
-					floatingLabel = true
-				});
+				SetNativeControl (new EGFloatingTextEntryContainer (this.Frame));
+				Control.MainControl.floatingLabel = true;
 				MessagingCenter.Subscribe<IVisualElementRenderer> (this, "Xamarin.ResignFirstResponder", HideKeyBoard, null);
-				base.Control.EditingChanged += this.EditingChanged;
-				base.Control.ShouldReturn = this.ShouldReturn;
+				base.Control.MainControl.EditingChanged += this.EditingChanged;
+				base.Control.MainControl.ShouldReturn = this.ShouldReturn;
 			}
 
 			if (e.NewElement != null) {
@@ -116,6 +136,9 @@ namespace Alex.Controls.iOS.Renderers
 				SetIsPassword ();
 				SetTextColor ();
 				SetInactiveAccentColor ();
+				SetErrorColor ();
+				SetValidator ();
+				SetErrorText ();
 			}
 		}
 
@@ -130,7 +153,7 @@ namespace Alex.Controls.iOS.Renderers
 		{
 			if (disposing) {
 				if (base.Control != null) {
-					base.Control.EditingChanged -= this.EditingChanged;
+					base.Control.MainControl.EditingChanged -= this.EditingChanged;
 				}
 				MessagingCenter.Unsubscribe<IVisualElementRenderer> (this, "Xamarin.ResignFirstResponder");
 			}

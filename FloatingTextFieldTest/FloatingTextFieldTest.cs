@@ -23,15 +23,21 @@ namespace FloatingTextFieldTest
 			EmailEntry.AccentColor = Color.FromHex("#FFC107");
 			EmailEntry.InactiveAccentColor = Color.FromHex ("#1976D2");
 			EmailEntry.TextColor = Color.Purple;
-			EmailEntry.Completed += MaterialEntry_Completed;
+			EmailEntry.ErrorColor = Color.Red;
+			EmailEntry.ErrorText = "Bad Email";
+			EmailEntry.Validator = FloatingTextEntry.EmailValidator;
 
 			PassEntry = new FloatingTextEntry ();
 			PassEntry.Placeholder = "Password";
 			PassEntry.AccentColor = Color.FromHex("#FFC107");
 			PassEntry.InactiveAccentColor = Color.FromHex ("#1976D2");
 			PassEntry.TextColor = Color.Purple;
-			PassEntry.Completed += MaterialEntry_Completed;
 			PassEntry.IsPassword = true;
+			PassEntry.ErrorColor = Color.Red;
+			PassEntry.ErrorText = "Bad Password";
+			PassEntry.Validator = (string input) => {
+				return !string.IsNullOrWhiteSpace (input);
+			};
 
 			// The root page of your application
 			MainPage = new ContentPage {
@@ -44,11 +50,6 @@ namespace FloatingTextFieldTest
 					}
 				}
 			};
-		}
-
-		void MaterialEntry_Completed (object sender, EventArgs e)
-		{
-			Console.WriteLine (EmailEntry.Text);
 		}
 
 		protected override void OnStart ()
