@@ -17,8 +17,8 @@ namespace Alex.Controls.iOS.Controls
 
 		public EGFloatingTextEntryContainer(CGRect frame):base(frame)
 		{
-			ErrorLabel = new UILabel (new CGRect (0, 45, 320, 15));
-			MainControl = new EGFloatingTextEntry (new CGRect (0, 0, 320, 40));
+			ErrorLabel = new UILabel (new CGRect (0, 45, frame.Width, 15));
+			MainControl = new EGFloatingTextEntry (new CGRect (0, 0, frame.Width, 40));
 
 			ErrorLabel.TextColor = MainControl.ErrorColor;
 			ErrorLabel.TextAlignment = UITextAlignment.Left;

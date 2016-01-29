@@ -26,7 +26,7 @@ namespace Alex.Controls.iOS.Renderers
 
 		public FloatingTextEntryRenderer ()
 		{
-			this.Frame = new CGRect (0, 20, 320, 60);
+			this.Frame = new CGRect (0, 0, 320, 60);
 		}
 
 		#region Handlers
