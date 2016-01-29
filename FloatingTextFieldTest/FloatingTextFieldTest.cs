@@ -1,6 +1,7 @@
 ﻿using System;
 using Xamarin.Forms;
 using Alex.Controls.Forms;
+using System.Threading.Tasks;
 
 namespace FloatingTextFieldTest
 {
@@ -12,6 +13,11 @@ namespace FloatingTextFieldTest
 		}
 
 		FloatingTextEntry PassEntry {
+			get;
+			set;
+		}
+
+		StatesButton Button {
 			get;
 			set;
 		}
@@ -39,6 +45,14 @@ namespace FloatingTextFieldTest
 				return !string.IsNullOrWhiteSpace (input);
 			};
 
+			Button = new StatesButton () {
+				Text = "Hello",
+				NormalImage = "boton",
+				DisableImage = "boton_disabled",
+				PressedImage = "boton_press",
+				TextColor = Color.White
+			};
+
 			// The root page of your application
 			MainPage = new ContentPage {
 				Content = new StackLayout {
@@ -46,14 +60,19 @@ namespace FloatingTextFieldTest
 					Padding = new Thickness(20,0),
 					Children = {
 						EmailEntry,
-						PassEntry
+						PassEntry,
+						Button
 					}
 				}
 			};
 		}
 
-		protected override void OnStart ()
+		protected async override void OnStart ()
 		{
+			await Task.Delay (5000);
+			Button.IsEnabled = false;
+			await Task.Delay (2000);
+			Button.IsEnabled = true;
 			// Handle when your app starts
 		}
 

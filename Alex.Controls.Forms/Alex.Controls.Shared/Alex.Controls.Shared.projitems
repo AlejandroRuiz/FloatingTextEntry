@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Extentions\AccessExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extentions\ImageSourceExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Extentions\" />
