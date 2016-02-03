@@ -17,8 +17,8 @@ namespace Alex.Controls.iOS.Controls
 
 		public EGFloatingTextEntryContainer(CGRect frame):base(frame)
 		{
-			ErrorLabel = new UILabel (new CGRect (0, 40, frame.Width, 20));
-			MainControl = new EGFloatingTextEntry (new CGRect (0, 0, frame.Width, 40));
+			ErrorLabel = new UILabel (CGRect.Empty);
+			MainControl = new EGFloatingTextEntry (CGRect.Empty);
 
 			ErrorLabel.TextColor = MainControl.ErrorColor;
 			ErrorLabel.TextAlignment = UITextAlignment.Left;
@@ -29,6 +29,25 @@ namespace Alex.Controls.iOS.Controls
 			this.Add (MainControl);
 			this.Add (ErrorLabel);
 			MainControl.errorLabel = ErrorLabel;
+		}
+
+		bool isLayoutSetted;
+
+		public override void LayoutSubviews ()
+		{
+			if (!isLayoutSetted) {
+				this.MainControl.AutoPinEdge (ALEdge.Right, ALEdge.Right, this);
+				this.MainControl.AutoPinEdge (ALEdge.Top, ALEdge.Top, this);
+				this.MainControl.AutoMatchDimension (ALDimension.Width, ALDimension.Width, this);
+				this.MainControl.AutoSetDimension (ALDimension.Height, 40);
+
+				this.ErrorLabel.AutoPinEdge (ALEdge.Bottom, ALEdge.Bottom, this);
+				this.ErrorLabel.AutoPinEdge (ALEdge.Left, ALEdge.Left, this);
+				this.ErrorLabel.AutoPinEdge (ALEdge.Right, ALEdge.Right, this);
+				this.ErrorLabel.AutoSetDimension (ALDimension.Height, 20);
+
+				isLayoutSetted = true;
+			}
 		}
 
 	}

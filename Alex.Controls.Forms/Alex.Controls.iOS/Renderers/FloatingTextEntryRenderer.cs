@@ -8,6 +8,7 @@ using Alex.Controls.iOS.Renderers;
 using Alex.Controls.iOS.Controls;
 using Alex.Controls.Forms;
 using Alex.Controls.Shared.Extentions;
+using PureLayoutSharp;
 
 [assembly: ExportRenderer (typeof(FloatingTextEntry), typeof(FloatingTextEntryRenderer))]
 namespace Alex.Controls.iOS.Renderers
@@ -97,6 +98,7 @@ namespace Alex.Controls.iOS.Renderers
 
 		protected override void OnElementPropertyChanged (object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
+			base.OnElementPropertyChanged (sender, e);
 			if (e.PropertyName == FloatingTextEntry.AccentColorProperty.PropertyName) {
 				SetAccentColor ();
 			} else if (e.PropertyName == FloatingTextEntry.InactiveAccentColorProperty.PropertyName) {
@@ -115,8 +117,15 @@ namespace Alex.Controls.iOS.Renderers
 				SetValidator ();
 			} else if (e.PropertyName == FloatingTextEntry.ErrorTextProperty.PropertyName) {
 				SetErrorText ();
+			} else if (e.PropertyName == FloatingTextEntry.WidthProperty.PropertyName) {
+				var newFrame = this.Frame;
+				newFrame.Width = (nfloat)base.Element.Width;
+				this.Frame = base.Control.Frame = newFrame;
+			} else if (e.PropertyName == FloatingTextEntry.HeightProperty.PropertyName) {
+				var newFrame = this.Frame;
+				newFrame.Height = (nfloat)base.Element.Height;
+				this.Frame = base.Control.Frame = newFrame;
 			}
-			base.OnElementPropertyChanged (sender, e);
 		}
 
 		protected override void OnElementChanged (ElementChangedEventArgs<FloatingTextEntry> e)
@@ -124,6 +133,10 @@ namespace Alex.Controls.iOS.Renderers
 			base.OnElementChanged (e);
 			if(e.OldElement == null){
 				SetNativeControl (new EGFloatingTextEntryContainer (this.Frame));
+
+				base.Control.AutoMatchDimension (ALDimension.Width, ALDimension.Width, this);
+				base.Control.AutoMatchDimension (ALDimension.Height, ALDimension.Height, this);
+
 				Control.MainControl.floatingLabel = true;
 				MessagingCenter.Subscribe<IVisualElementRenderer> (this, "Xamarin.ResignFirstResponder", HideKeyBoard, null);
 				base.Control.MainControl.EditingChanged += this.EditingChanged;
