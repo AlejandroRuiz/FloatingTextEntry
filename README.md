@@ -47,6 +47,16 @@ passEntry.InactiveAccentColor = Color.FromHex ("#1976D2");
 passEntry.TextColor = Color.Purple;
 passEntry.Completed += passEntry_Completed;
 passEntry.IsPassword = true;
+
+//Custom Error Message/Color/Validator
+passEntry.ErrorColor = Color.Red;
+passEntry.ErrorText = "Bad Email";
+//Put default emailvalidator
+passEntry.Validator = FloatingTextEntry.EmailValidator;
+//or create your own validator
+passEntry.Validator = (string input) => {
+  return !string.IsNullOrWhiteSpace (input);
+};
 ```
 
 ## Preview
