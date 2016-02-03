@@ -59,8 +59,8 @@ namespace FloatingTextFieldTest
 					VerticalOptions = LayoutOptions.Center,
 					Padding = new Thickness(20,0),
 					Children = {
-						EmailEntry,
-						PassEntry,
+						/*EmailEntry,
+						PassEntry,*/
 						Button
 					}
 				}
