@@ -48,6 +48,11 @@ namespace Alex.Controls.iOS.Renderers
 
 		#region Set/Update Values
 
+		void UpdateKeyboard()
+		{
+			base.Control.MainControl.ApplyKeyboard(Element.Keyboard);
+		}
+
 		void SetAccentColor()
 		{
 			base.Control.MainControl.AccentColor = base.Element.AccentColor.ToUIColor ();
@@ -125,7 +130,8 @@ namespace Alex.Controls.iOS.Renderers
 				var newFrame = this.Frame;
 				newFrame.Height = (nfloat)base.Element.Height;
 				this.Frame = base.Control.Frame = newFrame;
-			}
+			}else if (e.PropertyName == Xamarin.Forms.InputView.KeyboardProperty.PropertyName)
+				UpdateKeyboard();
 		}
 
 		protected override void OnElementChanged (ElementChangedEventArgs<FloatingTextEntry> e)
@@ -152,6 +158,7 @@ namespace Alex.Controls.iOS.Renderers
 				SetErrorColor ();
 				SetValidator ();
 				SetErrorText ();
+				UpdateKeyboard();
 			}
 		}
 

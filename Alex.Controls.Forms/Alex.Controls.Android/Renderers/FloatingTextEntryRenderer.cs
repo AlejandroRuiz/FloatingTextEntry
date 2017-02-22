@@ -115,35 +115,68 @@ namespace Alex.Controls.Android.Renderers
 				SetErrorColor ();
 				SetValidator ();
 				SetErrorText ();
+				UpdateKeyboard();
 			}
 		}
 
 
 		protected override void OnElementPropertyChanged (object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == FloatingTextEntry.AccentColorProperty.PropertyName) {
-				SetAccentColor ();
-			} else if (e.PropertyName == FloatingTextEntry.InactiveAccentColorProperty.PropertyName) {
-				SetInactiveAccentColor();
-			} else if (e.PropertyName == Entry.PlaceholderProperty.PropertyName) {
-				SetPlaceholder ();
-			} else if (e.PropertyName == Entry.IsPasswordProperty.PropertyName) {
-				SetIsPassword ();
-			} else if (e.PropertyName == Entry.TextProperty.PropertyName) {
-				SetText ();
-			} else if (e.PropertyName == Entry.TextColorProperty.PropertyName) {
-				SetTextColor ();
-			} else if (e.PropertyName == FloatingTextEntry.ErrorColorProperty.PropertyName) {
-				SetErrorColor ();
-			} else if (e.PropertyName == FloatingTextEntry.ValidatorProperty.PropertyName) {
-				SetValidator ();
-			} else if (e.PropertyName == FloatingTextEntry.ErrorTextProperty.PropertyName) {
-				SetErrorText ();
+			if (e.PropertyName == FloatingTextEntry.AccentColorProperty.PropertyName)
+			{
+				SetAccentColor();
 			}
+			else if (e.PropertyName == FloatingTextEntry.InactiveAccentColorProperty.PropertyName)
+			{
+				SetInactiveAccentColor();
+			}
+			else if (e.PropertyName == Entry.PlaceholderProperty.PropertyName)
+			{
+				SetPlaceholder();
+			}
+			else if (e.PropertyName == Entry.IsPasswordProperty.PropertyName)
+			{
+				SetIsPassword();
+			}
+			else if (e.PropertyName == Entry.TextProperty.PropertyName)
+			{
+				SetText();
+			}
+			else if (e.PropertyName == Entry.TextColorProperty.PropertyName)
+			{
+				SetTextColor();
+			}
+			else if (e.PropertyName == FloatingTextEntry.ErrorColorProperty.PropertyName)
+			{
+				SetErrorColor();
+			}
+			else if (e.PropertyName == FloatingTextEntry.ValidatorProperty.PropertyName)
+			{
+				SetValidator();
+			}
+			else if (e.PropertyName == FloatingTextEntry.ErrorTextProperty.PropertyName)
+			{
+				SetErrorText();
+			}
+			else if (e.PropertyName == Xamarin.Forms.InputView.KeyboardProperty.PropertyName)
+			{
+				UpdateKeyboard();
+			}
+
 			base.OnElementPropertyChanged (sender, e);
 		}
 
 		#region Set/Update Values
+
+		void UpdateKeyboard()
+		{
+			Entry model = Element;
+			targetEditor.InputType = model.Keyboard.ToInputType();
+			if (model.IsPassword && ((targetEditor.InputType & InputTypes.ClassText) == InputTypes.ClassText))
+				targetEditor.InputType = targetEditor.InputType | InputTypes.TextVariationPassword;
+			if (model.IsPassword && ((targetEditor.InputType & InputTypes.ClassNumber) == InputTypes.ClassNumber))
+				targetEditor.InputType = targetEditor.InputType | InputTypes.NumberVariationPassword;
+		}
 
 		void SetAccentColor()
 		{
@@ -198,6 +231,40 @@ namespace Alex.Controls.Android.Renderers
 		}
 
 		#endregion
+	}
+
+	public static class KeyboardExtensions
+	{
+		public static InputTypes ToInputType(this Keyboard self)
+		{
+			var result = new InputTypes();
+
+			// ClassText:																						!autocaps, spellcheck, suggestions 
+			// TextFlagNoSuggestions:																			!autocaps, !spellcheck, !suggestions
+			// InputTypes.ClassText | InputTypes.TextFlagCapSentences											 autocaps,	spellcheck,  suggestions
+			// InputTypes.ClassText | InputTypes.TextFlagCapSentences | InputTypes.TextFlagNoSuggestions;		 autocaps, !spellcheck, !suggestions
+
+			if (self == Keyboard.Default)
+				result = InputTypes.ClassText | InputTypes.TextVariationNormal;
+			else if (self == Keyboard.Chat)
+				result = InputTypes.ClassText | InputTypes.TextFlagCapSentences | InputTypes.TextFlagNoSuggestions;
+			else if (self == Keyboard.Email)
+				result = InputTypes.ClassText | InputTypes.TextVariationEmailAddress;
+			else if (self == Keyboard.Numeric)
+				result = InputTypes.ClassNumber | InputTypes.NumberFlagDecimal | InputTypes.NumberFlagSigned;
+			else if (self == Keyboard.Telephone)
+				result = InputTypes.ClassPhone;
+			else if (self == Keyboard.Text)
+				result = InputTypes.ClassText | InputTypes.TextFlagCapSentences;
+			else if (self == Keyboard.Url)
+				result = InputTypes.ClassText | InputTypes.TextVariationUri;
+			else
+			{
+				// Should never happens
+				result = InputTypes.TextVariationNormal;
+			}
+			return result;
+		}
 	}
 }
 
