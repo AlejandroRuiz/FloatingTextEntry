@@ -9,6 +9,7 @@ using Android.Graphics.Drawables;
 using System.Threading.Tasks;
 using Android.Util;
 using System.Linq;
+using Android.Graphics;
 
 [assembly: ExportRenderer (typeof(StatesButton), typeof(StatesButtonRenderer))]
 namespace Alex.Controls.Android.Renderers
@@ -48,6 +49,56 @@ namespace Alex.Controls.Android.Renderers
 
 			if (e.NewElement != null) {
 				await BuildBackground ();
+
+				var statesButton = e.NewElement as StatesButton;
+				if (statesButton.BackgroundColor != Xamarin.Forms.Color.Default &&
+				    statesButton.PressedBackgroundColor != Xamarin.Forms.Color.Default &&
+				    statesButton.DisableBackgroundColor != Xamarin.Forms.Color.Default) {
+					BuildColorBackground();
+				}
+			}
+		}
+
+		void BuildColorBackground()
+		{
+			using (var statesBackground = new StateListDrawable())
+			{
+				using (var imgNormal = Bitmap.CreateBitmap(1, 1, Bitmap.Config.Argb8888))
+				{
+					using (var imgDisable = Bitmap.CreateBitmap(1, 1, Bitmap.Config.Argb8888))
+					{
+						using (var imgPressed = Bitmap.CreateBitmap(1, 1, Bitmap.Config.Argb8888))
+						{
+							imgNormal.EraseColor(BaseElement.BackgroundColor.ToAndroid().ToArgb());
+							imgDisable.EraseColor(BaseElement.DisableBackgroundColor.ToAndroid().ToArgb());
+							imgPressed.EraseColor(BaseElement.PressedBackgroundColor.ToAndroid().ToArgb());
+
+
+							statesBackground.AddState(
+								new int[]{
+									-global::Android.Resource.Attribute.StatePressed,
+									global::Android.Resource.Attribute.StateEnabled
+								},
+								new BitmapDrawable(imgNormal)
+							);
+
+							statesBackground.AddState (
+								new int[] {
+									global::Android.Resource.Attribute.StatePressed,
+									global::Android.Resource.Attribute.StateEnabled
+								},
+								new BitmapDrawable(imgPressed)
+							);
+
+							statesBackground.AddState(
+								new int[] {
+									-global::Android.Resource.Attribute.StateEnabled
+								},
+								new BitmapDrawable(imgDisable)
+							);
+						}
+					}
+				}
 			}
 		}
 
@@ -116,12 +167,29 @@ namespace Alex.Controls.Android.Renderers
 		{
 			base.OnElementPropertyChanged (sender, e);
 
-			if (e.PropertyName == StatesButton.NormalImageProperty.PropertyName) {
+			if (e.PropertyName == StatesButton.NormalImageProperty.PropertyName)
+			{
+				await BuildBackground();
+			}
+			else if (e.PropertyName == StatesButton.DisableImageProperty.PropertyName)
+			{
+				await BuildBackground();
+			}
+			else if (e.PropertyName == StatesButton.PressedImageProperty.PropertyName)
+			{
 				await BuildBackground ();
-			} else if (e.PropertyName == StatesButton.DisableImageProperty.PropertyName) {
-				await BuildBackground ();
-			} else if (e.PropertyName == StatesButton.PressedImageProperty.PropertyName) {
-				await BuildBackground ();
+			}
+			else if (e.PropertyName == StatesButton.BackgroundColorProperty.PropertyName)
+			{
+				BuildColorBackground();
+			}
+			else if (e.PropertyName == StatesButton.DisableBackgroundColorProperty.PropertyName)
+			{
+				BuildColorBackground();
+			}
+			else if (e.PropertyName == StatesButton.PressedBackgroundColorProperty.PropertyName)
+			{
+				BuildColorBackground();
 			}
 		}
 	}

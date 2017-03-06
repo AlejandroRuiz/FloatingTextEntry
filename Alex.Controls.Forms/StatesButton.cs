@@ -10,6 +10,40 @@ namespace Alex.Controls.Forms
 			
 		}
 
+		#region Color Impl
+
+		public static readonly BindableProperty DisableBackgroundColorProperty =
+			BindableProperty.Create<StatesButton, Color> (
+				p => p.DisableBackgroundColor, Color.Default);
+
+		public Color DisableBackgroundColor
+		{
+			get {
+				return (Color)GetValue(DisableBackgroundColorProperty);
+			}
+			set {
+				SetValue(DisableBackgroundColorProperty, value);
+			}
+		}
+
+		public static readonly BindableProperty PressedBackgroundColorProperty =
+			BindableProperty.Create<StatesButton, Color> (
+				p => p.PressedBackgroundColor, Color.Default);
+
+		public Color PressedBackgroundColor
+		{
+			get {
+				return (Color)GetValue(PressedBackgroundColorProperty);
+			}
+			set {
+				SetValue(PressedBackgroundColorProperty, value);
+			}
+		}
+
+
+		#endregion
+
+		#region Image Impl
 		public static readonly BindableProperty NormalImageProperty =
 			BindableProperty.Create<StatesButton, ImageSource> (
 				p => p.NormalImage, null);
@@ -51,6 +85,7 @@ namespace Alex.Controls.Forms
 				SetValue(PressedImageProperty, value);
 			}
 		}
+		#endregion
 	}
 }
 

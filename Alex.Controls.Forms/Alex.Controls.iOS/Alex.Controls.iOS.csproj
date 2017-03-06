@@ -56,6 +56,7 @@
     <Compile Include="Renderers\FloatingTextEntryRenderer.cs" />
     <Compile Include="Controls\EGFloatingTextEntry.cs" />
     <Compile Include="Renderers\StatesButtonRenderer.cs" />
+    <Compile Include="Renderers\FaceDetectionRenderer.cs" />
   </ItemGroup>
   <Import Project="..\Alex.Controls.Shared\Alex.Controls.Shared.projitems" Label="Shared" Condition="Exists('..\Alex.Controls.Shared\Alex.Controls.Shared.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
@@ -72,5 +73,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\border.png" />
   </ItemGroup>
 </Project>

@@ -32,6 +32,7 @@ namespace FloatingTextFieldTest
 			EmailEntry.ErrorColor = Color.Red;
 			EmailEntry.ErrorText = "Bad Email";
 			EmailEntry.Validator = FloatingTextEntry.EmailValidator;
+			EmailEntry.Keyboard = Keyboard.Telephone;
 
 			PassEntry = new FloatingTextEntry ();
 			PassEntry.Placeholder = "Password";
@@ -47,21 +48,26 @@ namespace FloatingTextFieldTest
 
 			Button = new StatesButton () {
 				Text = "Hello",
-				NormalImage = "boton",
-				DisableImage = "boton_disabled",
-				PressedImage = "boton_press",
+				//NormalImage = "boton",
+				//DisableImage = "boton_disabled",
+				//PressedImage = "boton_press",
+				BackgroundColor = Color.Red,
+				DisableBackgroundColor = Color.Blue,
+				PressedBackgroundColor = Color.Fuchsia,
 				TextColor = Color.White
 			};
 
 			// The root page of your application
-			MainPage = new ContentPage {
-				Content = new StackLayout {
+			MainPage = new ContentPage
+			{
+				Content = new StackLayout
+				{
 					VerticalOptions = LayoutOptions.Center,
-					Padding = new Thickness(20,0),
+					Padding = new Thickness(20, 0),
 					Children = {
 						EmailEntry,
-						PassEntry,
-						Button
+						//PassEntry,
+						//Button
 					}
 				}
 			};

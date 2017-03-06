@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Alex.Controls.Shared.Extentions;
 using Foundation;
+using CoreGraphics;
 
 [assembly: ExportRenderer (typeof(StatesButton), typeof(StatesButtonRenderer))]
 namespace Alex.Controls.iOS.Renderers
@@ -70,6 +71,16 @@ namespace Alex.Controls.iOS.Renderers
 				await SetNormalImageResource ();
 				await SetDisableImageResource ();
 				await SetPressImageResource ();
+				var statesButton = e.NewElement as StatesButton;
+
+				if (statesButton.BackgroundColor != Color.Default &&
+				   statesButton.PressedBackgroundColor != Color.Default &&
+				   statesButton.DisableBackgroundColor != Color.Default) {
+					Control.ShowsTouchWhenHighlighted = false;
+					SetNormalColorResource();
+					SetDisableColorResource();
+					SetPressColorResource();
+				}
 			}
 		}
 
@@ -81,15 +92,80 @@ namespace Alex.Controls.iOS.Renderers
 		protected async override void OnElementPropertyChanged (object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			base.OnElementPropertyChanged (sender, e);
-			if (e.PropertyName == StatesButton.NormalImageProperty.PropertyName) {
-				await SetNormalImageResource ();
-			} else if (e.PropertyName == StatesButton.DisableImageProperty.PropertyName) {
-				await SetDisableImageResource ();
-			} else if (e.PropertyName == StatesButton.PressedImageProperty.PropertyName) {
-				await SetPressImageResource ();
+			if (e.PropertyName == StatesButton.NormalImageProperty.PropertyName)
+			{
+				await SetNormalImageResource();
+			}
+			else if (e.PropertyName == StatesButton.DisableImageProperty.PropertyName)
+			{
+				await SetDisableImageResource();
+			}
+			else if (e.PropertyName == StatesButton.PressedImageProperty.PropertyName)
+			{
+				await SetPressImageResource();
+			}
+			else if (e.PropertyName == StatesButton.BackgroundColorProperty.PropertyName)
+			{
+				SetNormalColorResource();
+			}
+			else if (e.PropertyName == StatesButton.DisableBackgroundColorProperty.PropertyName)
+			{
+				SetDisableColorResource();
+			}
+			else if (e.PropertyName == StatesButton.PressedBackgroundColorProperty.PropertyName)
+			{
+				SetPressColorResource();
 			}
 		}
 
+		#region Color Impl
+
+		void SetNormalColorResource()
+		{
+			UIImage source = null;
+			if (BaseElement.BackgroundColor != Color.Default) {
+				source = ImageFromColor(BaseElement.BackgroundColor.ToUIColor());
+			}
+			Control.SetBackgroundImage (source, UIControlState.Normal);
+		}
+
+		void SetDisableColorResource()
+		{
+			UIImage source = null;
+			if (BaseElement.BackgroundColor != Color.Default) {
+				source = ImageFromColor(BaseElement.DisableBackgroundColor.ToUIColor());
+			}
+			Control.SetBackgroundImage (source, UIControlState.Disabled);
+		}
+
+		void SetPressColorResource()
+		{
+			UIImage source = null;
+			if (BaseElement.BackgroundColor != Color.Default) {
+				source = ImageFromColor(BaseElement.PressedBackgroundColor.ToUIColor());
+			}
+			Control.ShowsTouchWhenHighlighted = false;
+			Control.SetBackgroundImage (source, UIControlState.Selected);
+			Control.SetBackgroundImage (source, UIControlState.Highlighted);
+		}
+
+		UIImage ImageFromColor(UIColor color){
+			CGRect rect = new CGRect(0.0f, 0.0f, 1.0f, 1.0f);
+			UIGraphics.BeginImageContext(rect.Size);
+			CGContext context = UIGraphics.GetCurrentContext();
+
+			context.SetFillColor(color.CGColor);
+			context.FillRect(rect);
+
+			UIImage image = UIGraphics.GetImageFromCurrentImageContext();
+			UIGraphics.EndImageContext();
+
+			return image;
+		}
+
+		#endregion
+
+		#region Image Impl
 		async Task SetNormalImageResource()
 		{
 			UIImage source = null;
@@ -126,6 +202,7 @@ namespace Alex.Controls.iOS.Renderers
 			Control.SetBackgroundImage (source, UIControlState.Selected);
 			Control.SetBackgroundImage (source, UIControlState.Highlighted);
 		}
+		#endregion
 
 		public object InvokeMethod(object target, string methodName, params object[] args)
 		{

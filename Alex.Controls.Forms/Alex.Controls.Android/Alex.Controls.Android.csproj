@@ -78,6 +78,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Renderers\FloatingTextEntryRenderer.cs" />
     <Compile Include="Renderers\StatesButtonRenderer.cs" />
+    <Compile Include="Renderers\FaceDetectionRenderer.cs" />
+    <Compile Include="Views\CustomView.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -85,12 +87,15 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values\Strings.xml" />
+    <AndroidResource Include="Resources\drawable-mdpi\my_face_glasses.png" />
   </ItemGroup>
   <Import Project="..\Alex.Controls.Shared\Alex.Controls.Shared.projitems" Label="Shared" Condition="Exists('..\Alex.Controls.Shared\Alex.Controls.Shared.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Import Project="..\..\packages\Xamarin.Forms.2.0.1.6505\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\..\packages\Xamarin.Forms.2.0.1.6505\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />
   <ItemGroup>
     <Folder Include="Renderers\" />
+    <Folder Include="Views\" />
+    <Folder Include="Resources\drawable-mdpi\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Alex.Controls.Forms.csproj">
