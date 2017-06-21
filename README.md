@@ -1,26 +1,26 @@
 # FloatingTextEntry
 FloatingTextEntry Forms Control for Android/iOS
 
-##Setup
+## Setup
 
-###iOS
+### iOS
 
 In your AppDelegate just add this:
 
-```
+```csharp
 FloatingTextEntryRenderer.Init ();
 ```
 
 ### Android
 
-####1 - Setup your app to support material desing
+#### 1 - Setup your app to support material desing
 
 Look at this tutorial https://blog.xamarin.com/material-design-for-your-xamarin-forms-android-apps/
 
-####2 - Setup the color
+#### 2 - Setup the color
 
 In your theme xml add the following nodes:
-```
+```xml
 //Accent Color
 <item name="colorAccent">@color/accent</item>
 //Inactive stroke color
@@ -29,17 +29,17 @@ In your theme xml add the following nodes:
 <item name="android:textColorHint">@color/primaryDark</item>
 ```
 
-####3 - Setup your app
+#### 3 - Setup your app
 
 Add the fallowing code in your Main Activity "OnStart" method:
 
-```
+```csharp
 FloatingTextEntryRenderer.Init ();
 ```
 
-##Usage
+## Usage
 
-```
+```csharp
 var passEntry = new FloatingTextEntry ();
 passEntry.Placeholder = "Password";
 passEntry.AccentColor = Color.FromHex("#FFC107");
